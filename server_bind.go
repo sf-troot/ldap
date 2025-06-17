@@ -50,6 +50,7 @@ func HandleBindRequest(req *ber.Packet, fns map[string]Binder, conn net.Conn) (r
 		log.Print("Simple bind request has wrong # children.  len(req.Children) != 3")
 		return LDAPResultInappropriateAuthentication
 	case LDAPBindAuthSASL:
+		log.Printf("SASL bind request: %d %s", len(req.Children), bindAuth.Data.String())
 		if len(req.Children) == 3 {
 			fnNames := []string{}
 			for k := range fns {
@@ -66,7 +67,6 @@ func HandleBindRequest(req *ber.Packet, fns map[string]Binder, conn net.Conn) (r
 		log.Print("SASL bind request has wrong # children.  len(req.Children) != 3")
 		return LDAPResultInappropriateAuthentication
 	}
-	return LDAPResultOperationsError
 }
 
 func encodeBindResponse(messageID uint64, ldapResultCode LDAPResultCode) *ber.Packet {
